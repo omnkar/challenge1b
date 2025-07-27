@@ -102,7 +102,7 @@ python challenge_1b.py --input_dir <path_to_pdfs> --output <path_to_output_json>
 
 ```
 
-**3. Using Existing JSON Input**
+**2. Using Existing JSON Input**
 
 🐳 Using Docker
 
