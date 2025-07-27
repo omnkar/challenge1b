@@ -76,11 +76,11 @@ Each section receives a composite score based on:
 pip install sentence-transformers PyMuPDF numpy pathlib
 ```
 
-### Usage Options
+# Usage Options
 
 ## 🐳 Run with Docker
 
-# Build the image:
+### Build the image:
 
 ```bash
 docker build --platform linux/amd64 -t persona_doc_extractor .
