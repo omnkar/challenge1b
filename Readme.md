@@ -2,7 +2,7 @@
 
 ## "Connect What Matters — For the User Who Matters"
 
- An intelligent document analyst that extracts and prioritizes the most relevant content from PDF collections based on specific personas and their jobs-to-be-done, using advanced semantic understanding and dynamic content analysis.
+An intelligent document analyst that extracts and prioritizes the most relevant content from PDF collections based on specific personas and their jobs-to-be-done, using advanced semantic understanding and dynamic content analysis.
 
 ## 🎯 Overview
 
@@ -76,47 +76,76 @@ Each section receives a composite score based on:
 pip install sentence-transformers PyMuPDF numpy pathlib
 ```
 
-### Basic Usage
+### Usage Options
 
 ## 🐳 Run with Docker
-  # Build the image:
 
-  ```bash
-  docker build --platform linux/amd64 -t persona_doc_extractor .
-  ```
-
-  ``` bash
- docker run --rm -v "$(pwd)/app/input/<collection_name>:/app/input" -v "$(pwd)/app/output:/app/output" persona_doc_extractor --input_dir /app/input --persona "<persona_description>" --job "<job_to_be_done>" --output /app/output/results.json
-  ```
+# Build the image:
 
 ```bash
-python challenge_1b.py --input_dir app/input/<collection_name> --persona "<persona_description>" --job "<job_to_be_done>" --output app/output/results.json
+docker build --platform linux/amd64 -t persona_doc_extractor .
+```
+
+**1. Direct Parameter Input (Quick)**
+
+🐳 Using Docker
+
+```bash
+docker run --rm -v "$(pwd)/<INPUT_PDF_FOLDER>:/app/input" -v "$(pwd)/<OUTPUT_FOLDER>:/app/output" persona_doc_extractor --input_dir /app/input --output /app/output/<OUTPUT_FILENAME>.json --persona "<YOUR_PERSONA>" --job "<YOUR_JOB_DESCRIPTION>"
+
+```
+
+💻 Using Local Python Script
+
+```bash
+python challenge_1b.py --input_dir <path_to_pdfs> --output <path_to_output_json> --persona "<persona>" --job "<job_to_be_done>"
+
+```
+
+**3. Using Existing JSON Input**
+
+🐳 Using Docker
+
+```bash
+  docker run --rm -v "$(pwd)/<pdf_folder>:/app/input" -v "$(pwd)/<output_folder>:/app/output" -v "$(pwd)/<input_json_path>:/app/input.json" persona_doc_extractor --json_input /app/input.json --input_dir /app/input --output /app/output/<output_filename>.json
+
+```
+
+💻 Using Local Python Script
+
+```bash
+python challenge_1b.py --json_input <path_to_input_json> --input_dir <path_to_pdf_folder> --output <path_to_output_json>
+
 ```
 
 ### Docker Execution
 
 ```dockerfile
 FROM python:3.10-slim
+
+# Set working directory
 WORKDIR /app
 
-# Install system dependencies
-RUN apt-get update && apt-get install -y libgl1
+# Install system dependencies for PyMuPDF
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+        libgl1 \
+        libxfixes3 \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Install Python dependencies
-RUN pip install --no-cache-dir \
-    pymupdf \
-    sentence-transformers \
-    numpy
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy required files
+# Copy application code
 COPY pdf_outline_extractor.py .
-COPY solution_1b.py .
+COPY challenge_1b.py .
 
-# Set entrypoint
-CMD ["python", "challenge_1b.py", \
-     "--input_dir", "/app/input/", \
-     "--output", "/app/output/results.json"]
+# Create input/output folders (required by execution)
+RUN mkdir -p /app/input /app/output
 
+# Set entrypoint to run challenge_1b.py with user-supplied args
+ENTRYPOINT ["python", "challenge_1b.py"]
 ```
 
 ## 📊 Sample Test Cases
