@@ -808,7 +808,7 @@ if __name__ == "__main__":
     # Process the collection
     try:
         
-        result = process_collection_from_json(input_json, input_source)
+        resultg = process_collection_from_json(input_json, input_source)
 
         # Save results
         with open(args.output, "w", encoding="utf-8") as f:
